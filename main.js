@@ -1,0 +1,29 @@
+import * as leaflet from "https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js";
+
+var map = leaflet.map("map").setView([39.8282, -98.5696], 5);
+
+leaflet
+  .tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  })
+  .addTo(map);
+
+leaflet.tileLayer
+  .wms(
+    "https://mapservices.weather.noaa.gov/eventdriven/services/WWA/watch_warn_adv/MapServer/WMSServer",
+    {
+      layers: "0,1",
+      format: "image/png",
+      transparent: true,
+    },
+  )
+  .addTo(map);
+
+map.on("click", (e) => {
+  const {
+    latlng: { lat, lng },
+  } = e;
+  document.location = `https://beta.weather.gov/point/${lat}/${lng}`;
+});
