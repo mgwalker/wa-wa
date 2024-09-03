@@ -10,16 +10,33 @@ leaflet
   })
   .addTo(map);
 
-leaflet.tileLayer
-  .wms(
-    "https://mapservices.weather.noaa.gov/eventdriven/services/WWA/watch_warn_adv/MapServer/WMSServer",
-    {
-      layers: "0,1",
-      format: "image/png",
-      transparent: true,
-    },
-  )
-  .addTo(map);
+const layers = new Map([
+  [
+    "wwa",
+    leaflet.tileLayer.wms(
+      "https://mapservices.weather.noaa.gov/eventdriven/services/WWA/watch_warn_adv/MapServer/WMSServer",
+      {
+        layers: "0,1",
+        format: "image/png",
+        transparent: true,
+      },
+    ),
+  ],
+  [
+    "radar",
+    leaflet.tileLayer.wms(
+      "https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows",
+      {
+        layers: "conus_bref_qcd",
+        format: "image/png",
+        transparent: true,
+      },
+    ),
+  ],
+]);
+
+let activeLayer = layers.get("wwa");
+activeLayer.addTo(map);
 
 map.on("click", (e) => {
   const {
@@ -27,3 +44,25 @@ map.on("click", (e) => {
   } = e;
   document.location = `https://beta.weather.gov/point/${lat}/${lng}`;
 });
+
+Array.from(document.querySelectorAll("button[data-product]")).forEach(
+  (button) => {
+    button.addEventListener(
+      "click",
+      ({
+        target: {
+          dataset: { product },
+        },
+      }) => {
+        const layer = layers.get(product);
+        if (layer) {
+          if (activeLayer) {
+            activeLayer.remove(map);
+          }
+          activeLayer = layer;
+          layer.addTo(map);
+        }
+      },
+    );
+  },
+);
