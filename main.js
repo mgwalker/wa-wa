@@ -39,10 +39,16 @@ let activeLayer = layers.get("wwa");
 activeLayer.addTo(map);
 
 map.on("click", (e) => {
-  const {
-    latlng: { lat, lng },
-  } = e;
-  document.location = `https://beta.weather.gov/point/${lat}/${lng}`;
+  const { latlng } = e;
+
+  const lat = Math.round(latlng.lat * 10_000) / 10_000;
+  const lng = Math.round(latlng.lng * 10_000) / 10_000;
+
+  leaflet
+    .popup(latlng, {
+      content: `<a href="https://beta.weather.gov/point/${lat}/${lng}">Open on beta</a>`,
+    })
+    .openOn(map);
 });
 
 Array.from(document.querySelectorAll("button[data-product]")).forEach(
