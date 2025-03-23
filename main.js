@@ -46,7 +46,7 @@ map.on("click", (e) => {
 
   leaflet
     .popup(latlng, {
-      content: `<a href="https://beta.weather.gov/point/${lat}/${lng}">Open on beta</a>`,
+      content: `<a href="https://mgwalker.github.io/static-beta.weather.gov#/point/${lat}/${lng}">Open on beta</a>`,
     })
     .openOn(map);
 });
